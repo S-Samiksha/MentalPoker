@@ -2,8 +2,8 @@
 
 import socket
 
-HOST = "10.27.78.31"  # Standard loopback interface address (localhost)
-PORT = 65131  # Port to listen on (non-privileged ports are > 1023)
+HOST = "10.27.251.159"  # Standard loopback interface address (localhost)
+PORT = 53142  # Port to listen on (non-privileged ports are > 1023)
 
 while (True):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -17,6 +17,11 @@ while (True):
                 data = conn.recv(1024)
                 if not data:
                     break
+
+                print(data.decode())
+                if data.decode() == "end":
+                    s.close() 
+                    exit()
+
                 print(data)
-                conn.sendall(b"From server :-)")
-    
+                conn.sendall(b"Hello from server :-)")
