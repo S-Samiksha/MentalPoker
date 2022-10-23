@@ -1,7 +1,11 @@
 # Derived from https://realpython.com/python-sockets/#echo-client-and-server
 
 import socket
-
+from Crypto.Util.number import *
+from Crypto import Random
+import Crypto
+import gmpy2
+import sys
 
 HOST = "10.27.251.159"  # The server's hostname or IP address
 PORT = 53142  # The port used by the server
