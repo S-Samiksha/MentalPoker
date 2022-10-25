@@ -57,11 +57,16 @@ So what does that mean? <br>
 
 #### Things to do:
 1. How to send my p and q across without attackers sniffing? Need something form of Hashing and Hash values (one or two days fixing that)
+    > Alice send p and Bob send q
 2. How to ensure PHI is large enough to avoid a brute force attack? (one day fixing this)
-3. Brute Force Attack (One day)
-4. Plain text attack on the cards side. (one or two days)
-5. Blinding Attack with actual code, because online provides the one for RSA. here our algorithm is slightly different (One or two days) 
-6. RNG can we hardcode it? and then prove something for it like Week 9 Lecture slide 4
+3. Brute Force Attack --> Key Class 
+4. Plain text attack on the cards side. (one or two days) --> Deck Class 
+5. RNG can we hardcode it? and then prove something for it like Week 9 Lecture slide 4 --> Deck Class
+6. Blinding Attack with actual code, because online provides the one for RSA. here our algorithm is slightly different (One or two days) --> Key Class
+7. Initial Card Values can Leak Information --> Figure this out 
+> m^(phi(P)/2)mod P --> find out why it works?
+8. AES 
+9. Deffie Hellman 
 
 
 
