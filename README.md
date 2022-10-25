@@ -60,7 +60,9 @@ So what does that mean? <br>
 2. How to ensure PHI is large enough to avoid a brute force attack? (one day fixing this)
 3. Brute Force Attack (One day)
 4. Plain text attack on the cards side. (one or two days)
-5. Blinding Attack with actual code (One or two days)
+5. Blinding Attack with actual code, because online provides the one for RSA. here our algorithm is slightly different (One or two days) 
+6. RNG can we hardcode it? and then prove something for it like Week 9 Lecture slide 4
+
 
 
 Total days: 
