@@ -70,8 +70,6 @@ So what does that mean? <br>
 
 
 
-Total days: 
-Sam: 4/5 days from now 
 
 
 

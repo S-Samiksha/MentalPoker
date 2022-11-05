@@ -1,9 +1,14 @@
 # Derived from https://realpython.com/python-sockets/#echo-client-and-server
 
 import socket
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import dh
+from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+
 
 HOST = "127.0.0.1"  # Standard loopback interface address (localhost)
 PORT = 53142  # Port to listen on (non-privileged ports are > 1023)
+
 
 while (True):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
