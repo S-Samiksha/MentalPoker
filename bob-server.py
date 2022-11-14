@@ -8,6 +8,7 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import dh
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from Bob_func import *
+import Deck 
 
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 print("~~~~~~~~~~~~~~~~~~ Bob ready to play ~~~~~~~~~~~~~~~~~~~~~~")
@@ -27,28 +28,56 @@ while (True):
             print(f"Connected by {addr}")
             while True:
                 print()
-                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-                data = conn.recv(1024)
+                print("~~~~~~~~~~~~~~~~~~~ Bob Receiving Deck~~~~~~~~~~~~~~~~~~~~~~~~")
+                data = conn.recv(40000)
                 if not data:
                     break
-                
-
-
                 #Send/Receiving cards ----------------
                 data_alice = data.decode()
                 print("Recived from Alice: ", data_alice)
-                print("Encrypted Alice message with Bob key: ", bob_encrypt_alice(data_alice))
-                if not data_alice:
-                    break
+
+                temp1 = data_alice.replace("'", "")
+                print(temp1)
+                temp = temp1.strip("']['").split(', ')
+                print(temp)
+                
+                cardDeckReceived = Deck.Deck(temp)
+                print("Initialized Deck: ", cardDeckReceived.getDeck())
+
+                print("~~~~~~~~~~~~~~~~~~~ Bob Selects 5 for Alice ~~~~~~~~~~~~~~~~~~")
+                AliceCardsA = cardDeckReceived.pickCards()
+                print("Alice cards (a): ", AliceCardsA)
+
+                conn.sendall(str(AliceCardsA).encode())
+
+                print("~~~~~~~~~~~~~~~~~~~ Bob Selects 5 for himself ~~~~~~~~~~~~~~~~~~")
+                BobCardsA = cardDeckReceived.pickCards()
+
+                BobCardsAB =[]
+                for value in BobCardsA:
+                    BobCardsAB.append(bob_encrypt_alice(value))
+                
+                print(BobCardsAB)
+                conn.sendall(str(BobCardsAB).encode())
+
+                data_B = conn.recv(4096)
+
+                print("~~~~~~~~~~~~~~~~~~~~Bob Decrypts for himself~~~~~~~~~~~~~")
+                data_Bob = data_B.decode()
+                temp1 = data_Bob.replace("'", "")
+                temp = temp1.strip('][').split(',')
+                print(temp)
+
+                results = []
+
+                for value in temp:
+                    results.append(bob_decrypt(value))
+
+                print("Bob's hand is : ", results)
+
+                break
 
                 
-                val = input("Enter your value: ")
-                if (len(val)>1):
-                    msg = val
-                
-                valsend = bob_encrypt(msg)
-                print("Bob Encrypted Value: ", valsend)
-                conn.sendall(valsend.encode())
 
 
 

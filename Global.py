@@ -18,7 +18,8 @@ results = PARAMETER.parameter_numbers()
 p = Crypto.Util.number.getPrime(BITS, randfunc=Crypto.Random.get_random_bytes) #get a random p prime 
 q = Crypto.Util.number.getPrime(BITS, randfunc=Crypto.Random.get_random_bytes) #get a random q prime 
 n = p*q #n value this has to be shared between alice and bob 
-
+print(p)
+print(q)
 
 def return_paramter():
     print(results.p, results.g)

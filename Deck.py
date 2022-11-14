@@ -40,6 +40,7 @@ class Deck:
         random.shuffle(self.deck)
         print("Deck is shuffled.")
 
+    #Picking five cards 
     def pickCards(self):
         pickedNums = []
         i = 0
