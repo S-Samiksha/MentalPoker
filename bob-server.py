@@ -76,6 +76,9 @@ while (True):
                 print("Bob's hand is : ", results)
 
                 break
+                conn.close()
+    break
+                
 
                 
 
