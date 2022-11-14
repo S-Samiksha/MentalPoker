@@ -4,19 +4,23 @@
 #Application usage for Alice
 
 import socket
+import gmpy2
 from Crypto.Util.number import *
 from Crypto import Random
-import Crypto
-import gmpy2
-import sys
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import dh
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+from Global import return_rsa
 
-q
+p = 223621388031669181155297260782194064943
+q = 245132897482391278543047151822806952741
+n = p*q
+PHI=(p-1)*(q-1) #phi value this is shared between alice and bob
+e_alice = 65539 
+d_alice = gmpy2.invert(e_alice, PHI)
 
 HOST = "127.0.0.1"  # The server's hostname or IP address
-PORT = 53142  # The port used by the server
+PORT = 53141  # The port used by the server
 
 
 
@@ -26,10 +30,12 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     if (len(val)>1):
         msg = val
     
-
-
+    m = bytes_to_long(msg.encode('utf-8'))
+    c1=pow(m,e_alice, n)  #M^(e_alice) mod n it is to be noted that this is in integer format 
+    print("Sending Encrypted Value: ", c1)
+    valsend = str(c1)
     s.connect((HOST, PORT))
-    s.sendall(msg.encode())
+    s.sendall(valsend.encode())
     data = s.recv(1024)
 
     print(f"Received {data!r}")
@@ -43,20 +49,11 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 '''
 RSA Codes:
 
-p = Crypto.Util.number.getPrime(BITS, randfunc=Crypto.Random.get_random_bytes) #get a random p prime 
-q = Crypto.Util.number.getPrime(BITS, randfunc=Crypto.Random.get_random_bytes) #get a random q prime 
-n = p*q #n value this has to be shared between alice and bob 
-PHI=(p-1)*(q-1) #phi value 
 
-# RSA Encrytion keys
-e_bob=65537 #seems like this is the private
-e_alice=65539 #seems like this is the private
-d_alice=(gmpy2.invert(e_bob, PHI))
 
-m = bytes_to_long(msg.encode('utf-8'))
-c1=pow(m,e_alice, n) #M^(e_alice) mod n it is to be noted that this is in integer format 
-print("Sending Encrypted Value: ", c1)
-valsend = str(c1)
+
+
+
 
 '''
     
