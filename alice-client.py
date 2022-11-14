@@ -21,7 +21,7 @@ PHI=(p-1)*(q-1) #phi value this is shared between alice and bob
 e_alice = 65539 
 d_alice = gmpy2.invert(e_alice, PHI)
 
-def alice_ecrypt(msg):
+def alice_encrypt(msg):
     m = bytes_to_long(msg.encode('utf-8'))
     c1=pow(m,e_alice, n)  #M^(e_alice) mod n it is to be noted that this is in integer format 
     valsend = str(c1)
@@ -40,22 +40,26 @@ PORT = 53140  # The port used by the server
 
 while KeyboardInterrupt():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+
+        print()
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
         val = input("Enter your value: ")
         if (len(val)>1):
             msg = val
         
-        valsend = alice_ecrypt(msg)
-        print("Encrypted Value: ", valsend)
-        msg = alice_decrypt(valsend)
-        print("Decrypted Value: ", msg)
+        valsend = alice_encrypt(msg)
+        print("Alice Encrypted Value: ", valsend)
         s.connect((HOST, PORT))
         s.sendall(valsend.encode())
 
-        data_bob = s.recv(1024)
+        data = s.recv(1024)
+        data_bob = data.decode()
+        print("Received from Bob: ", data_bob)
+        print("Encrypted Bob Message using Alice Key: ", pow(int(data_bob),e_alice, n))
 
-        print(f"Received from Bob: {data_bob!r}")
         
-
+        #print("Encrypted Bob message with Alice Key: ", long_to_bytes(alice_encrypt(data_bob)))
+        
 
 
 

@@ -34,7 +34,7 @@ def bob_decrypt(c2):
 
 HOST = "127.0.0.1"  # Standard loopback interface address (localhost)
 PORT = 53140  # Port to listen on (non-privileged ports are > 1023)
-while (KeyboardInterrupt()):
+while (True):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((HOST, PORT))
@@ -42,10 +42,17 @@ while (KeyboardInterrupt()):
         conn, addr = s.accept()
         with conn:
             print(f"Connected by {addr}")
-            while KeyboardInterrupt():
+            while True:
+                print()
+                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
                 data = conn.recv(1024)
+                if not data:
+                    break
+
                 data_alice = data.decode()
                 print("Recived from Alice: ", data_alice)
+                temp = pow(int(data_alice), e_bob, n)
+                print("Encrypted Alice message with Bob key: ", temp)
                 if not data_alice:
                     break
 
@@ -55,5 +62,8 @@ while (KeyboardInterrupt()):
                     msg = val
                 
                 valsend = bob_encrypt(msg)
+                print("Bob Encrypted Value: ", valsend)
                 conn.sendall(valsend.encode())
+
+
 
