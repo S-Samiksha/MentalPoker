@@ -27,6 +27,12 @@ def alice_ecrypt(msg):
     valsend = str(c1)
     return valsend
 
+def alice_decrypt(c2):
+    val = int(c2)
+    d1=pow(val,d_alice, n)
+    byt_val = long_to_bytes(d1)
+    msg = byt_val.decode('utf-8')
+    return msg
 
 
 HOST = "127.0.0.1"  # The server's hostname or IP address
@@ -39,6 +45,9 @@ while KeyboardInterrupt():
             msg = val
         
         valsend = alice_ecrypt(msg)
+        print("Encrypted Value: ", valsend)
+        msg = alice_decrypt(valsend)
+        print("Decrypted Value: ", msg)
         s.connect((HOST, PORT))
         s.sendall(valsend.encode())
 

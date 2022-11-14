@@ -24,6 +24,13 @@ def bob_encrypt(msg):
     valsend = str(c1)
     return valsend
 
+def bob_decrypt(c2):
+    val = int(c2)
+    d1 = pow(val,d_bob,n)
+    byt_val = long_to_bytes(d1)
+    msg = byt_val.decode('utf-8')
+    return msg
+
 
 HOST = "127.0.0.1"  # Standard loopback interface address (localhost)
 PORT = 53140  # Port to listen on (non-privileged ports are > 1023)
