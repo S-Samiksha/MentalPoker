@@ -7,29 +7,12 @@ from Crypto import Random
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import dh
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+from Bob_func import *
 
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 print("~~~~~~~~~~~~~~~~~~ Bob ready to play ~~~~~~~~~~~~~~~~~~~~~~")
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-p = 223621388031669181155297260782194064943
-q = 245132897482391278543047151822806952741
-n = p*q
-PHI=(p-1)*(q-1) #phi value 
-e_bob = 65537
-d_bob = gmpy2.invert(e_bob, PHI)
 
-def bob_encrypt(msg):
-    m = bytes_to_long(msg.encode('utf-8'))
-    c1 = pow(m, e_bob, n)
-    valsend = str(c1)
-    return valsend
-
-def bob_decrypt(c2):
-    val = int(c2)
-    d1 = pow(val,d_bob,n)
-    byt_val = long_to_bytes(d1)
-    msg = byt_val.decode('utf-8')
-    return msg
 
 
 HOST = "127.0.0.1"  # Standard loopback interface address (localhost)
@@ -48,11 +31,13 @@ while (True):
                 data = conn.recv(1024)
                 if not data:
                     break
+                
 
+
+                #Send/Receiving cards ----------------
                 data_alice = data.decode()
                 print("Recived from Alice: ", data_alice)
-                temp = pow(int(data_alice), e_bob, n)
-                print("Encrypted Alice message with Bob key: ", temp)
+                print("Encrypted Alice message with Bob key: ", bob_encrypt_alice(data_alice))
                 if not data_alice:
                     break
 
