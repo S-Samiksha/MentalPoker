@@ -18,7 +18,7 @@ print("~~~~~~~~~~~~~~~~~ Alice ready to play ~~~~~~~~~~~~~~~~~~~~~")
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 
-HOST = "127.0.0.1"  # The server's hostname or IP address
+HOST = "10.27.181.20"  # The server's hostname or IP address
 PORT = 53140  # The port used by the server
 
 while True:
