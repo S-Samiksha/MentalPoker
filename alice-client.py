@@ -12,13 +12,14 @@ from cryptography.hazmat.primitives.asymmetric import dh
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from Alice_func import *
 import Deck
+import Hand
 
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 print("~~~~~~~~~~~~~~~~~ Alice ready to play ~~~~~~~~~~~~~~~~~~~~~")
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 
-HOST = "10.27.181.20"  # The server's hostname or IP address
+HOST = "127.0.0.1"  # The server's hostname or IP address
 PORT = 53140  # The port used by the server
 
 while True:
@@ -60,7 +61,10 @@ while True:
         results = []
         for value in temp:
             results.append(alice_decrypt(value))
+
+        aliceHand = Hand.Hand(results)
         print("Alice's hand is : ", results)
+        print(aliceHand.getHand())
 
 
         print("~~~~~~~~~~~~~~~~~ Alice Waiting ~~~~~~~~~~~~~~~~~")

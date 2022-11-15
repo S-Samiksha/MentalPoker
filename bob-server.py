@@ -9,6 +9,7 @@ from cryptography.hazmat.primitives.asymmetric import dh
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from Bob_func import *
 import Deck 
+import Hand
 
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 print("~~~~~~~~~~~~~~~~~~ Bob ready to play ~~~~~~~~~~~~~~~~~~~~~~")
@@ -67,13 +68,18 @@ while (True):
                 temp1 = data_Bob.replace("'", "")
                 temp = temp1.strip('][').split(',')
                 print(temp)
+                print()
 
                 results = []
 
                 for value in temp:
                     results.append(bob_decrypt(value))
+                
 
+                bobHand = Hand.Hand(results)
                 print("Bob's hand is : ", results)
+                print(bobHand.getHand())
+
 
                 break
                 conn.close()
