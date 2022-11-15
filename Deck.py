@@ -3,8 +3,9 @@ Deck Class
 
 Functions:
 * init - forms deck of 52 cards
+* createDeck - forms deck of 52 cards
+* getDeck - returns deck in list
 * shuffle - shuffles deck of cards
-* encryptDeck - encrypts the entire deck of cards using RSA
 * pickCards -  picks 5 cards for self or opponent
 
 '''
@@ -61,7 +62,10 @@ class Deck:
                     pickedNums.append(x)
                     pickedNums.sort()
                     i += 1
-                    print("You have {} picks left.".format(5-i))
+                    if (5-i) == 1:
+                        print("You have {} pick left.".format(5-i))
+                    else:
+                        print("You have {} picks left.".format(5-i))
                     print("Picked numbers: {}\n".format(pickedNums))
         
         pickedCards = []
