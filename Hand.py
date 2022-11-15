@@ -33,8 +33,10 @@ class Hand:
 		numNums = []
 		for card in hand:
 			numNums.append(int(card))
-		self.numNums = numNums
+
 		numNums.sort()
+		self.numNums = numNums
+
 		for card in numNums:
 			newCard = Card.Card(int(card))
 			numCard = [newCard.getSuit(),newCard.getNumFace()]
@@ -52,23 +54,23 @@ class Hand:
 	def rankMeaning(self):
 		num = self.rank()
 		if num == 9:
-			return("Straight Flush")
+			return("a straight Flush")
 		elif num == 8:
-			return("Four of a kind")
+			return("four of a kind")
 		elif num == 7:
-			return("Full house")
+			return("a full house")
 		elif num == 6:
-			return("Flush")
+			return("a flush")
 		elif num == 5:
-			return("Straight!")
+			return("a straight!")
 		elif num == 4:
-			return("Three of a kind!")
+			return("three of a kind!")
 		elif num == 3:
-			return("Two pairs!")
+			return("two pairs!")
 		elif num == 2:
-			return("Pair!")
+			return("a pair!")
 		else:
-			return("No combo!")
+			return("no combo!")
 
 	def rank(self):
 		if self.isStraightFlush():
@@ -91,8 +93,7 @@ class Hand:
 			return 1
 
 	def bestCard(self):
-		i = self.numNums.index(max(self.numNums))
-		return self.hand[i]
+		return self.numNums[4]
 
 	def bestSuit(self):
 		suit = self.numHand[4][0]

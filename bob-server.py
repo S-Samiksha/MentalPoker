@@ -10,10 +10,12 @@ from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from Bob_func import *
 import Deck 
 import Hand
+import Data
+import Winner
 
-print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-print("~~~~~~~~~~~~~~~~~~ Bob ready to play ~~~~~~~~~~~~~~~~~~~~~~")
-print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Bob ready to play~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 
 
@@ -28,58 +30,83 @@ while (True):
         with conn:
             print(f"Connected by {addr}")
             while True:
-                print()
-                print("~~~~~~~~~~~~~~~~~~~ Bob Receiving Deck~~~~~~~~~~~~~~~~~~~~~~~~")
+                print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                print("                                      Receiving Deck                                      ")
+                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
                 data = conn.recv(40000)
                 if not data:
                     break
-                #Send/Receiving cards ----------------
-                data_alice = data.decode()
-                print("Recived from Alice: ", data_alice)
 
-                temp1 = data_alice.replace("'", "")
-                print(temp1)
-                temp = temp1.strip("']['").split(', ')
-                print(temp)
+                data_alice = Data.decode(data)
+                print("Received: ", data_alice)
+                cardDeckReceived = Deck.Deck(data_alice)
+
+                print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                print("                        Selecting 5 Cards for Alice + Sending to Her                      ")
+                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+                aliceCardsA = cardDeckReceived.pickCards()
+
+                conn.sendall(str(aliceCardsA).encode())
+
+                print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                print("                                   Selecting Own 5 Cards                                  ")
+                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
                 
-                cardDeckReceived = Deck.Deck(temp)
-                print("Initialized Deck: ", cardDeckReceived.getDeck())
+                bobCardsA = cardDeckReceived.pickCards()
 
-                print("~~~~~~~~~~~~~~~~~~~ Bob Selects 5 for Alice ~~~~~~~~~~~~~~~~~~")
-                AliceCardsA = cardDeckReceived.pickCards()
-                print("Alice cards (a): ", AliceCardsA)
+                print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                print("                           Encrypting Own Cards + Sending to Alice                        ")
+                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
-                conn.sendall(str(AliceCardsA).encode())
+                bobCardsAB =[]
+                for value in bobCardsA:
+                    bobCardsAB.append(bob_encrypt_alice(value))
+                print("Encrypted cards: ",bobCardsAB)
 
-                print("~~~~~~~~~~~~~~~~~~~ Bob Selects 5 for himself ~~~~~~~~~~~~~~~~~~")
-                BobCardsA = cardDeckReceived.pickCards()
+                conn.sendall(str(bobCardsAB).encode())
 
-                BobCardsAB =[]
-                for value in BobCardsA:
-                    BobCardsAB.append(bob_encrypt_alice(value))
-                
-                print(BobCardsAB)
-                conn.sendall(str(BobCardsAB).encode())
+                print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                print("                                   Receiving Own Cards                                    ")
+                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
-                data_B = conn.recv(4096)
+                data = conn.recv(4096)
+                data_alice = Data.decode(data)
+                print("Received: ", data_alice)
 
-                print("~~~~~~~~~~~~~~~~~~~~Bob Decrypts for himself~~~~~~~~~~~~~")
-                data_Bob = data_B.decode()
-                temp1 = data_Bob.replace("'", "")
-                temp = temp1.strip('][').split(',')
-                print(temp)
-                print()
+                print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                print("                    Decrypting Cards to Get Own Hand + Sending Own Hand                   ")
+                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
-                results = []
-
-                for value in temp:
-                    results.append(bob_decrypt(value))
-                
-
-                bobHand = Hand.Hand(results)
-                print("Bob's hand is : ", results)
+                bobCards = []
+                for value in data_alice:
+                    bobCards.append(bob_decrypt(value))
+                bobHand = Hand.Hand(bobCards)
+                print("Bob's hand is : ", bobCards)
                 print(bobHand.getHand())
 
+                conn.sendall(str(bobCards).encode())
+
+                print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                print("                                 Receiving Alice's Hand                                   ")
+                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+                data = conn.recv(4096)
+                aliceCards = Data.decode(data)
+                aliceHand = Hand.Hand(aliceCards)
+                print("Received: ", aliceCards)
+                print("Alice's's hand is : ", aliceHand.getHand())
+
+                print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                print("                                  Results of the Game                                     ")
+                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                
+                winner = Winner.Winner(aliceCards,bobCards).getWinner()
+                if (winner == 1):
+                    print("Alice wins !!")
+                else:
+                    print("Bob wins!!")
 
                 break
                 conn.close()

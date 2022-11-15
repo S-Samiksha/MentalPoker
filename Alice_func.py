@@ -29,11 +29,8 @@ def alice_encrypt(msg):
 def alice_decrypt(c2):
     val = int(c2)
     d1=pow(val,d_alice, n)
-    print(d1)
     byt_val = long_to_bytes(d1)
-    print(byt_val)
     msg = byt_val.decode()
-    print(msg)
     return msg
 
 def alice_encrypt_bob(msg):

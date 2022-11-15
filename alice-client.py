@@ -13,10 +13,13 @@ from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from Alice_func import *
 import Deck
 import Hand
+import Data
+import Winner
+import time
 
-print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-print("~~~~~~~~~~~~~~~~~ Alice ready to play ~~~~~~~~~~~~~~~~~~~~~")
-print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Alice ready to play~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 
 HOST = "127.0.0.1"  # The server's hostname or IP address
@@ -25,14 +28,19 @@ PORT = 53140  # The port used by the server
 while True:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
-        print()
-        print("~~~~~~~~~~~~~~~~~~~~~ Alice Creating Deck ~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("                                       Creating Deck                                      ")
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
         cardDeck = Deck.Deck()
         deck = cardDeck.getDeck() #deck is a list 
         print("Deck is: ", deck)
 
 
-        print("~~~~~~~~~~~~~~~~~~~~~ Alice Encrypting Deck ~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("                                      Encrypting Deck                                     ")
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
         encrypted_deck = []
         for value in deck:
             encrypted_deck.append(alice_encrypt(str(value)))
@@ -40,47 +48,77 @@ while True:
         print("Encrypted Deck is: ", encrypted_deck)
         cardDeck.setDeck(encrypted_deck)
 
-        print("~~~~~~~~~~~~~~~~~~~~~ Alice Shuffling Deck ~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("                             Shuffling Deck + Sending Deck to Bob                         ")
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
         cardDeck.shuffle()
         print("Shuffled deck is: ", cardDeck.getDeck())
 
-
-        print("~~~~~~~~~~~~~~~~~~~~~ Alice Sending Deck ~~~~~~~~~~~~~~~~~~~~~~~~~~")
         s.connect((HOST, PORT))
+        print()
         s.sendall(str(cardDeck.getDeck()).encode())
 
-        print("~~~~~~~~~~~~~~~~~~~~~~ Alice Waiting ~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("                                      Receiving Own Cards                                 ")
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
         data = s.recv(4096)
-        data_bob = data.decode()
-        print("Received from Bob: ", data_bob)
+        data_bob = Data.decode(data)
+        print("Received: ", data_bob)
 
-        print("~~~~~~~~~~~~Alice decrypts her own cards~~~~~~~~~~")
-        temp1 = data_bob.replace("'", "")
-        temp = temp1.strip('][').split(', ')
-        print(temp)
-        results = []
-        for value in temp:
-            results.append(alice_decrypt(value))
+        print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("                                Decrypting Cards to Get Own Hand                          ")
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
-        aliceHand = Hand.Hand(results)
-        print("Alice's hand is : ", results)
-        print(aliceHand.getHand())
+        aliceCards = []
+        for value in data_bob:
+            aliceCards.append(alice_decrypt(value))
+
+        aliceHand = Hand.Hand(aliceCards)
+        print("Alice's's hand is : ", aliceHand.getHand())
+
+        print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("                                 Receiving Bob's Encrypted Cards                          ")
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+        data = s.recv(4096)
+        data_bob = Data.decode(data)
+        print("Received: ", data_bob)
+
+        print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("                                      Decrypting Bob's Cards                              ")
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+        bobCardsB = []
+        for value in data_bob:
+            bobCardsB.append(alice_decrypt_bob(value))
+        print("Bob's decrypted cards: ", bobCardsB)
+        s.sendall(str(bobCardsB).encode())
+
+        print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("                                Receiving Bob's Hand + Sending Own                        ")
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+        data = s.recv(4096)
+        bobCards = Data.decode(data)
+        bobHand = Hand.Hand(bobCards)
+        print("Received: ", bobCards)
+        print("Bob's's hand is : ", bobHand.getHand())
+
+        s.sendall(str(aliceCards).encode())
+
+        print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("                                      Results of the Game                                 ")
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+        winner = Winner.Winner(aliceCards,bobCards).getWinner()
+        if (winner == 1):
+            print("Alice wins !!")
+        else:
+            print("Bob wins!!")
 
 
-        print("~~~~~~~~~~~~~~~~~ Alice Waiting ~~~~~~~~~~~~~~~~~")
-        data_B = s.recv(4096)
-        data_BoB = data_B.decode()
-
-        temp1 = data_BoB.replace("'","")
-        temp = temp1.strip('][').split(',')
-        print(temp)
-        results = []
-        for value in temp:
-            results.append(alice_decrypt_bob(value))
-        
-
-        print("Bob's encrypted hand is: ", results)
-        s.sendall(str(results).encode())
        
         break
 
