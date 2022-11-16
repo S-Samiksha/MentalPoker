@@ -28,11 +28,14 @@ PHI=(p-1)*(q-1) #phi value
 
 class key:
 
-    def __init__(self):
-        self.e_key = Crypto.Util.number.getPrime(8, randfunc=Crypto.Random.get_random_bytes)
-        self.d_key = gmpy2.invert(self.e_key, PHI)
-        print("Your Encryption Key is: ", self.e_key)
-        print("Your Decryption Key is: ", self.d_key)
+    def __init__(self, *args):
+        if len(args) == 0:
+            self.e_key = Crypto.Util.number.getPrime(8, randfunc=Crypto.Random.get_random_bytes)
+            self.d_key = gmpy2.invert(self.e_key, PHI)
+            print("Your Encryption Key is: ", self.e_key)
+            print("Your Decryption Key is: ", self.d_key)
+        else:
+            self.d_key = args[0]
 
     def card_encrypt(self, msg):
         m = bytes_to_long(msg.encode())

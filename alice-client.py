@@ -99,16 +99,21 @@ while True:
         s.sendall(str(bobCardsB).encode())
 
         print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-        print("                                Receiving Bob's Hand + Sending Own                        ")
+        print("                                Receiving Bob's Key + Sending Own                         ")
         print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
         data = s.recv(4096)
-        bobCards = Data.decode(data)
+        print("Received: ", data)
+        bob_key = key.key(int(data))
+        bobCards = []
+        for value in bobCardsB:
+            bobCards.append(bob_key.card_decrypt(value))
+
         bobHand = Hand.Hand(bobCards)
-        print("Received: ", bobCards)
         print("Bob's's hand is : ", bobHand.getHand())
 
-        s.sendall(str(aliceCards).encode())
+        e_alice, d_alice = alice_key.return_keys()
+        s.sendall(str(d_alice).encode())
 
         print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
         print("                                      Results of the Game                                 ")
