@@ -1,5 +1,10 @@
 .venv
 .__pychace__
+<<<<<<< HEAD
+=======
+__pycache__/
+
+>>>>>>> 4dfcbe7d4440cc584e71b698490d9f15afb053ca
 .Python
 [Bb]in
 [Ii]nclude
