@@ -79,7 +79,7 @@ while (True):
                 print("Received: ", data_alice)
 
                 print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-                print("                    Decrypting Cards to Get Own Hand + Sending Own Hand                   ")
+                print("                     Decrypting Cards to Get Own Hand + Sending Own Key                   ")
                 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
                 bobCards = []
@@ -89,16 +89,21 @@ while (True):
                 print("Bob's hand is : ", bobCards)
                 print(bobHand.getHand())
 
-                conn.sendall(str(bobCards).encode())
+                e_bob, d_bob = bob_key.return_keys()
+                conn.sendall(str(d_bob).encode())
 
                 print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-                print("                                 Receiving Alice's Hand                                   ")
+                print("                                 Receiving Alice's Key                                    ")
                 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
                 data = conn.recv(4096)
-                aliceCards = Data.decode(data)
+                print("Received: ", data)
+                alice_key = key.key(int(data))
+                aliceCards = []
+                for value in aliceCardsA:
+                    aliceCards.append(alice_key.card_decrypt(value))
+
                 aliceHand = Hand.Hand(aliceCards)
-                print("Received: ", aliceCards)
                 print("Alice's's hand is : ", aliceHand.getHand())
 
                 print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
