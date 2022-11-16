@@ -10,12 +10,12 @@ from Crypto import Random
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import dh
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
-from Alice_func import *
 import Deck
 import Hand
 import Data
 import Winner
 import time
+import key
 
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Alice ready to play~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
@@ -27,6 +27,8 @@ PORT = 53140  # The port used by the server
 
 while True:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+
+        alice_key = key.key()
 
         print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
         print("                                       Creating Deck                                      ")
@@ -43,7 +45,7 @@ while True:
 
         encrypted_deck = []
         for value in deck:
-            encrypted_deck.append(alice_encrypt(str(value)))
+            encrypted_deck.append(alice_key.card_encrypt(str(value)))
         
         print("Encrypted Deck is: ", encrypted_deck)
         cardDeck.setDeck(encrypted_deck)
@@ -73,7 +75,7 @@ while True:
 
         aliceCards = []
         for value in data_bob:
-            aliceCards.append(alice_decrypt(value))
+            aliceCards.append(alice_key.card_decrypt(value))
 
         aliceHand = Hand.Hand(aliceCards)
         print("Alice's's hand is : ", aliceHand.getHand())
@@ -92,7 +94,7 @@ while True:
 
         bobCardsB = []
         for value in data_bob:
-            bobCardsB.append(alice_decrypt_bob(value))
+            bobCardsB.append(alice_key.alice_decrypt_bob(value))
         print("Bob's decrypted cards: ", bobCardsB)
         s.sendall(str(bobCardsB).encode())
 

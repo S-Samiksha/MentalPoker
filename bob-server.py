@@ -7,11 +7,11 @@ from Crypto import Random
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import dh
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
-from Bob_func import *
 import Deck 
 import Hand
 import Data
 import Winner
+import key
 
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Bob ready to play~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
@@ -30,6 +30,9 @@ while (True):
         with conn:
             print(f"Connected by {addr}")
             while True:
+                bob_key = key.key()
+
+
                 print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
                 print("                                      Receiving Deck                                      ")
                 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
@@ -62,7 +65,7 @@ while (True):
 
                 bobCardsAB =[]
                 for value in bobCardsA:
-                    bobCardsAB.append(bob_encrypt_alice(value))
+                    bobCardsAB.append(bob_key.bob_alice_encrypt(value))
                 print("Encrypted cards: ",bobCardsAB)
 
                 conn.sendall(str(bobCardsAB).encode())
@@ -81,7 +84,7 @@ while (True):
 
                 bobCards = []
                 for value in data_alice:
-                    bobCards.append(bob_decrypt(value))
+                    bobCards.append(bob_key.card_decrypt(value))
                 bobHand = Hand.Hand(bobCards)
                 print("Bob's hand is : ", bobCards)
                 print(bobHand.getHand())
