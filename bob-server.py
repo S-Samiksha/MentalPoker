@@ -111,6 +111,34 @@ while (True):
                 else:
                     print("Bob wins!!")
 
+                print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                print("                                      Check Cheating                                      ")
+                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+                
+                e_key, d_key = bob_key.return_keys()
+                alice_e_key = conn.recv(1024)
+                conn.sendall(str(e_key).encode())
+                print("Alice's Encryption Key is: ", alice_e_key.decode())
+                alice_d_key = conn.recv(1024)
+                conn.sendall(str(d_key).encode())
+                print("Alice's Decryption Key is : ", alice_d_key.decode())
+
+                #Decrypt Alice's hand 
+                results = []
+                for value in aliceCardsA:
+                    results.append(bob_key.decrypt_other(value, alice_d_key.decode()))
+                print(results) # Alice's decrypted hand in terms of numbers not the 'ace of hearts' kind
+
+                AlicesHand = Hand.Hand(results)
+                print(AlicesHand.getHand())
+
+                #Now I check if what i receive from alice is the same as what bob sent earlier to alice
+                if (AlicesHand.getHand()==aliceHand.getHand()):
+                    print("There has been no cheating!")
+                else:
+                    print("There has been cheating!!!!")
+
                 break
                 conn.close()
     break

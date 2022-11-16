@@ -120,8 +120,32 @@ while True:
         else:
             print("Bob wins!!")
 
+        print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("                                      Check Cheating                                      ")
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
-       
+        e_key, d_key = alice_key.return_keys()
+        s.sendall(str(e_key).encode())
+        bob_e_key = s.recv(1024)
+        print("Bob's Encryption Key is : ", bob_e_key.decode())
+        s.sendall(str(d_key).encode())
+        bob_d_key = s.recv(1024)
+        print("Bob's Decryption Key is : ", bob_d_key.decode())
+
+        results = []
+        for value in bobCardsB:
+            results.append(alice_key.decrypt_other(value, bob_d_key.decode()))
+        print(results) #returning bob's hand in terms of numbers 
+        BobsHand = Hand.Hand(results)
+        print(BobsHand.getHand())
+
+        #Now I check if what i receive from bob is the same as what bob sent earlier 
+        if (BobsHand.getHand()==bobHand.getHand()):
+            print("There has been no cheating!")
+        else:
+            print("There has been cheating!!!!")
+
+
         break
 
         #print("Encrypted Bob Message using Alice Key: ", alice_encrypt_bob(data_bob))
