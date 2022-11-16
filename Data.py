@@ -3,3 +3,4 @@ def decode(rec):
     temp1 = data.replace("'", "")
     decoded = temp1.strip('][').split(', ')
     return decoded
+

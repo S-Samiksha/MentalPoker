@@ -17,8 +17,8 @@ from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 # p = 4192394699 #32 bits
 # q = 2921148821 #32 bits
 
-p=52361
-q=43793
+p=233
+q=211
 
 n = p*q
 PHI=(p-1)*(q-1) #phi value 
@@ -29,8 +29,14 @@ PHI=(p-1)*(q-1) #phi value
 class key:
 
     def __init__(self):
-        self.e_key = Crypto.Util.number.getPrime(8, randfunc=Crypto.Random.get_random_bytes)
-        self.d_key = gmpy2.invert(self.e_key, PHI)
+        while True:
+            self.e_key = Crypto.Util.number.getPrime(8, randfunc=Crypto.Random.get_random_bytes)
+            self.d_key = gmpy2.invert(self.e_key, PHI)
+            if (self.d_key > int((1/3)*(n)**(1/4))):
+                break
+            else:
+                continue
+
         print("Your Encryption Key is: ", self.e_key)
         print("Your Decryption Key is: ", self.d_key)
 
@@ -63,3 +69,6 @@ class key:
         byt_val = long_to_bytes(d1)
         msg = byt_val.decode()
         return msg
+
+    def return_e_n(self):
+        return self.e_key, n
