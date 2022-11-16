@@ -8,18 +8,18 @@ Functions:
 * setFace - translate into card face from number
 * getNumFace - returns card face number (1-13)
 
-Clubs (2-14)
-Diamonds (15-27)
-Hearts (28-40)
-Spades (41-53)
+Clubs (1-13)
+Diamonds (14-26)
+Hearts (27-39)
+Spades (40-52)
 
 '''
 
 class Card:
     def __init__(self,*args):
         if len(args) == 1:
-            if (args[0]<=1 or args[0]>53):
-                print("Card must be between 2-53. Try again.")
+            if (args[0]<=0 or args[0]>52):
+                print("Card must be between 1-52. Try again.")
                 exit
             else:
                 self.setSuit(args[0])
@@ -32,11 +32,11 @@ class Card:
         return "{} of {}".format(self.face,self.suit)
     
     def setSuit(self,num):
-        if(num <= 14):
+        if(num <= 13):
             self.suit = "Clubs"
-        elif (num > 14 and num <= 27):
+        elif (num > 13 and num <= 26):
             self.suit = "Diamonds"
-        elif (num > 27 and num <= 40):
+        elif (num > 26 and num <= 39):
             self.suit = "Hearts"
         else:
             self.suit = "Spades"
@@ -45,14 +45,14 @@ class Card:
         return self.suit
 
     def setFace(self,card):
-        if card <= 14:
+        if card <= 13:
             num = card-1
-        elif (card > 14 and card <= 27):
-            num = card-14
-        elif (card > 27 and card <= 40):
-            num = card-27
+        elif (card > 13 and card <= 26):
+            num = card-13
+        elif (card > 26 and card <= 39):
+            num = card-26
         else:
-            num = card-40
+            num = card-39
         
         self.numFace = num
 
