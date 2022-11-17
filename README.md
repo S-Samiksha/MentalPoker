@@ -13,7 +13,7 @@
 Using Git/BASH run the following commands:
 
 ```
-git clone https://github.com/S-Samiksha/MentalPoker/tree/final 
+git -b final --single-branch clone https://github.com/S-Samiksha/MentalPoker
 
 python -m venv venv
 
