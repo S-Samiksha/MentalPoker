@@ -34,8 +34,8 @@ Run the command: `python alice-client.py` <br>
 
 
 ## Adapted From: <br>
-> https://people.csail.mit.edu/rivest/ShamirRivestAdleman-MentalPoker.pdf
-> https://rextar4444.medium.com/how-to-play-mental-poker-a-tutorial-by-the-author-of-cypher-poker-loosely-edited-by-twoc-j-smithy-8c1c6f7a8259 
+> https://people.csail.mit.edu/rivest/ShamirRivestAdleman-MentalPoker.pdf <br>
+> https://rextar4444.medium.com/how-to-play-mental-poker-a-tutorial-by-the-author-of-cypher-poker-loosely-edited-by-twoc-j-smithy-8c1c6f7a8259 <br>
 
 
 
